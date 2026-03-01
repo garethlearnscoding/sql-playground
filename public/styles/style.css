@@ -1,34 +1,42 @@
 /* SQL Table Formating */
 table.sql-output {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Fira Code', monospace;
-    margin-top: 12px;
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Fira Code", monospace;
+  margin-top: 12px;
 }
 
 table.sql-output th,
 table.sql-output td {
-    border: 1px solid #999;
-    padding: 8px 12px;
-    text-align: left;
+  border: 1px solid #999;
+  padding: 8px 12px;
+  text-align: left;
 }
 
 table.sql-output th {
-    background: #d8bee5;   /* dark theme */
-    color: #000;
+  background: #d8bee5; /* dark theme */
+  color: #000;
 }
 
 table.sql-output tr:nth-child(even) {
-    background: #fcdce1;
-    color: #000;
+  background: #fcdce1;
+  color: #000;
 }
 
 table.sql-output tr:nth-child(odd) {
-    background: #f3e4f5;
-    color: #000;
+  background: #f3e4f5;
+  color: #000;
 }
 
 /* Optional hover */
 table.sql-output tr:hover {
-    background: #ffb0b5;
+  background: #ffb0b5;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* prevents extra scrollbars */
 }

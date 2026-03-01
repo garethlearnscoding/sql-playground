@@ -6,43 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8" />
 
+    <link href="/styles/main.css" rel="stylesheet" />
+
     <!-- SQL.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 
-    <!-- Your JS -->
-    <script src="js/sql.js" defer></script>
-    <script src="js/example.js" defer></script>
-
+    
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <!-- Alpine -->
-    <script
-      defer
+    <scriptf
       src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
     ></script>
-
-    <!-- Prism -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
-
-    <link href="/styles/style.css" rel="stylesheet" />
+    
+    <!-- Your JS -->
+    <script type="module" src="/js/main.js" defer?></script>
   </head>
 
   <body class="bg-gray-100">
     <!-- HEADER -->
-     <header
-  class="bg-gray-900 text-white sticky top-0 z-50 shadow-lg px-6 py-3"
+    <header
+      class="bg-gray-900 text-white sticky top-0 z-50 shadow-lg px-6 py-3"
     >
       <div class="flex items-center justify-between">
         <div class="text-lg font-semibold tracking-wide">SQL Examples</div>
@@ -192,15 +178,15 @@
           </div>
         </nav>
 
-        <a href="/sandbox"
+        <a
+          href="/sandbox"
           id="sandboxBtn"
           class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl shadow-md transition"
         >
-          Docs
-      </a>
+          Sandbox
+        </a>
       </div>
     </header>
-
 
     <!-- CONTENT -->
     <main class="max-w-5xl mx-auto px-6 py-10">
@@ -246,6 +232,5 @@
       <div id="table" class="overflow-x-auto"></div>
     </main>
 
-    <script src="./js/navbar.js" defer></script>
   </body>
 </html>
