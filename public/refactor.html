@@ -21,19 +21,53 @@
     ></script>
     <!-- SQL.js-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+
     <!-- Your JS -->
     <script type="module" src="/js/main.js" defer?></script>
   </head>
 
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" x-data="{page: 'docs'}">
     <!-- HEADER -->
     <header
       class="bg-gray-900 text-white sticky top-0 z-50 shadow-lg px-6 py-3"
     >
       <div class="flex items-center justify-between">
-        <div class="text-lg font-semibold tracking-wide">SQL Examples</div>
+        <div x-text="page === 'docs' ? 'SQL Examples' : 'SQL Sandbox'" class="text-lg font-semibold tracking-wide">SQL Examples</div>
 
         <nav class="hidden md:flex space-x-6">
+            
+          <!-- Tables -->
+          <div x-data="{ open: false }" class="relative">
+            <button
+              @click="open = !open"
+              class="hover:text-blue-400 transition"
+            >
+              Tables
+            </button>
+
+            <div
+              x-show="open"
+              x-cloak
+              @click.outside="open = false"
+              x-transition
+              class="absolute left-0 mt-2 w-56 bg-gray-800 rounded-xl shadow-xl p-2"
+            >
+              <div class="px-3 py-2 text-sm text-gray-400">Create</div>
+              <a
+                @click="loadExample('create'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >CREATE TABLE</a
+              >
+
+              <div class="px-3 py-2 text-sm text-gray-400">Delete</div>
+              <a
+                @click="loadExample('drop'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >DROP TABLE</a
+              >
+            </div>
+          </div>
+
           <!-- CRUD -->
           <div x-data="{ open: false }" class="relative">
             <button
@@ -93,6 +127,7 @@
               x-show="open"
               @click.outside="open = false"
               x-transition
+              x-cloak
               class="absolute left-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-xl p-2"
             >
               <a
@@ -121,10 +156,11 @@
               x-show="open"
               @click.outside="open = false"
               x-transition
+              x-cloak
               class="absolute left-0 mt-2 w-52 bg-gray-800 rounded-xl shadow-xl p-2"
             >
               <a
-                @click="loadExample('inner_join'); open = false"
+                @click="loadExample('join'); open = false"
                 class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
                 >INNER JOIN</a
               >
@@ -149,6 +185,7 @@
               x-show="open"
               @click.outside="open = false"
               x-transition
+              x-cloak
               class="absolute left-0 mt-2 w-56 bg-gray-800 rounded-xl shadow-xl p-2"
             >
               <div class="px-3 py-2 text-sm text-gray-400">Aggregation</div>
@@ -178,20 +215,75 @@
           </div>
         </nav>
 
-        <a
-          href="/docs"
-          id="sandboxBtn"
-          class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl shadow-md transition"
-        >
-          Docs
-        </a>
+        <button
+          @click="
+            page = (page === 'docs' ? 'sandbox' : 'docs');
+            $nextTick(() => {
+              if (page === 'sandbox') {
+                setupSandboxDB();
+              } else {
+                setupDocsDB();
+              }
+            });
+          "
+          class="bg-blue-600 hover:bg-blue-500 px-4 py-2 w-28 text-center rounded-xl shadow-md transition"
+          x-text="page === 'docs' ? 'Sandbox' : 'Docs'"
+        ></button>
       </div>
     </header>
 
-    <!-- CONTENT -->
-    <main class="max-w-5xl mx-auto px-6 py-10">
-      <h3 class="text-2xl font-semibold mb-4">SQL Sandbox</h3>
+    <!-- SQL Docs Content -->
+    <main x-show="page === 'docs'" class="max-w-5xl mx-auto px-6 py-10">
+      <h3 class="text-2xl font-semibold mb-4">SQL Docs</h3>
+      <!-- Docs -->
+      <h4 class="text-xl font-semibold mt-10 mb-4">SQL Syntax</h4>
+      <pre
+        class="bg-gray-900 text-white p-4 rounded-xl"
+      ><code id="sqlSyntax" class="language-sql"></code>
+    </pre>
 
+      <h4 class="text-xl font-semibold mt-10 mb-4">SQL Example</h4>
+      <pre
+        class="bg-gray-900 text-white p-4 rounded-xl"
+      ><code id="sqlExample" class="language-sql"></code>
+</pre>
+      <h4 id="sqlGoal" class="text-lg font-medium mb-2 text-blue-400"></h4>
+
+      <h4 class="text-xl font-semibold mt-10 mb-4">Python Example</h4>
+      <pre
+        class="bg-gray-900 text-white p-4 rounded-xl"
+      ><code id="pythonExample" class="language-python"></code>
+</pre>
+      <div class="mt-4 space-x-4">
+        <button
+          id="runDocsBtn"
+          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500 transition"
+        >
+          Run
+        </button>
+
+        <button
+          id="resetDocsBtn"
+          class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition"
+        >
+          Reset DB
+        </button>
+      </div>
+
+      <pre
+        id="outputDocs"
+        class="mt-6 bg-gray-900 text-white p-4 rounded-xl break-words whitespace-pre-wrap"
+      ></pre>
+
+      <!-- LIVE TABLE -->
+      <h4 class="text-xl font-semibold mt-10 mb-4">Live Table View</h4>
+      <div id="tableDocs" class="overflow-x-auto"></div>
+    </main>
+
+    <!-- SQL Sand Box Content-->
+    <main x-show="page === 'sandbox'" class="max-w-5xl mx-auto px-6 py-10">
+      <h3 class="text-2xl font-semibold mb-4">SQL Sandbox</h3>
+        
       <textarea
         id="query"
         class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -200,25 +292,28 @@
       ></textarea>
       <div class="mt-4 space-x-4">
         <button
-          id="runBtn"
+          id="runSandboxBtn"
           class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500 transition"
         >
           Run
         </button>
 
         <button
-          id="resetBtn"
+          id="resetSandboxBtn"
           class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition"
         >
           Reset DB
         </button>
       </div>
 
-      <pre id="output" class="mt-6 bg-gray-900 text-white p-4 rounded-xl"></pre>
+      <pre
+        id="outputSandbox"
+        class="mt-6 bg-gray-900 text-white p-4 rounded-xl break-words whitespace-pre-wrap"
+      ></pre>
 
       <!-- LIVE TABLE -->
       <h4 class="text-xl font-semibold mt-10 mb-4">Live Table View</h4>
-      <div id="table" class="overflow-x-auto"></div>
+      <div id="tableSandbox" class="overflow-x-auto"></div>
     </main>
   </body>
 </html>
