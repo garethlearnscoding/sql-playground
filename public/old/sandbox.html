@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SQL Playground</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+
+    <link href="/styles/main.css" rel="stylesheet" />
+
+    <!-- SQL.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine -->
+    <script
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+    <!-- SQL.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <!-- Your JS -->
+    <script type="module" src="/js/main.js" defer?></script>
+  </head>
+
+  <body class="bg-gray-100">
+    <!-- HEADER -->
+    <header
+      class="bg-gray-900 text-white sticky top-0 z-50 shadow-lg px-6 py-3"
+    >
+      <div class="flex items-center justify-between">
+        <div class="text-lg font-semibold tracking-wide">SQL Examples</div>
+
+        <nav class="hidden md:flex space-x-6">
+          <!-- CRUD -->
+          <div x-data="{ open: false }" class="relative">
+            <button
+              @click="open = !open"
+              class="hover:text-blue-400 transition"
+            >
+              CRUD
+            </button>
+
+            <div
+              x-show="open"
+              x-cloak
+              @click.outside="open = false"
+              x-transition
+              class="absolute left-0 mt-2 w-56 bg-gray-800 rounded-xl shadow-xl p-2"
+            >
+              <div class="px-3 py-2 text-sm text-gray-400">Create</div>
+              <a
+                @click="loadExample('insert'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >INSERT</a
+              >
+
+              <div class="px-3 py-2 text-sm text-gray-400">Read</div>
+              <a
+                @click="loadExample('select'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >SELECT</a
+              >
+
+              <div class="px-3 py-2 text-sm text-gray-400">Update</div>
+              <a
+                @click="loadExample('update'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >UPDATE</a
+              >
+
+              <div class="px-3 py-2 text-sm text-gray-400">Delete</div>
+              <a
+                @click="loadExample('delete'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >DELETE</a
+              >
+            </div>
+          </div>
+
+          <!-- Filtering -->
+          <div x-data="{ open: false }" class="relative">
+            <button
+              @click="open = !open"
+              class="hover:text-blue-400 transition"
+            >
+              Filtering & Sorting
+            </button>
+
+            <div
+              x-show="open"
+              @click.outside="open = false"
+              x-transition
+              class="absolute left-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-xl p-2"
+            >
+              <a
+                @click="loadExample('where'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >WHERE</a
+              >
+              <a
+                @click="loadExample('order_by'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >ORDER BY</a
+              >
+            </div>
+          </div>
+
+          <!-- Joins -->
+          <div x-data="{ open: false }" class="relative">
+            <button
+              @click="open = !open"
+              class="hover:text-blue-400 transition"
+            >
+              Joins
+            </button>
+
+            <div
+              x-show="open"
+              @click.outside="open = false"
+              x-transition
+              class="absolute left-0 mt-2 w-52 bg-gray-800 rounded-xl shadow-xl p-2"
+            >
+              <a
+                @click="loadExample('inner_join'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >INNER JOIN</a
+              >
+              <a
+                @click="loadExample('left_outer_join'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >LEFT OUTER JOIN</a
+              >
+            </div>
+          </div>
+
+          <!-- Aggregation -->
+          <div x-data="{ open: false }" class="relative">
+            <button
+              @click="open = !open"
+              class="hover:text-blue-400 transition"
+            >
+              Aggregation & Grouping
+            </button>
+
+            <div
+              x-show="open"
+              @click.outside="open = false"
+              x-transition
+              class="absolute left-0 mt-2 w-56 bg-gray-800 rounded-xl shadow-xl p-2"
+            >
+              <div class="px-3 py-2 text-sm text-gray-400">Aggregation</div>
+              <a
+                @click="loadExample('count'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >COUNT()</a
+              >
+              <a
+                @click="loadExample('sum'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >SUM()</a
+              >
+              <a
+                @click="loadExample('avg'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >AVG()</a
+              >
+
+              <div class="px-3 py-2 text-sm text-gray-400">Grouping</div>
+              <a
+                @click="loadExample('group_by'); open = false"
+                class="block px-4 py-2 hover:bg-gray-700 rounded cursor-pointer"
+                >GROUP BY</a
+              >
+            </div>
+          </div>
+        </nav>
+
+        <a
+          href="/docs"
+          id="sandboxBtn"
+          class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl shadow-md transition"
+        >
+          Docs
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="max-w-5xl mx-auto px-6 py-10">
+      <h3 class="text-2xl font-semibold mb-4">SQL Sandbox</h3>
+
+      <textarea
+        id="query"
+        class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        rows="6"
+        spellcheck="false"
+      ></textarea>
+      <div class="mt-4 space-x-4">
+        <button
+          id="runBtn"
+          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-500 transition"
+        >
+          Run
+        </button>
+
+        <button
+          id="resetBtn"
+          class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition"
+        >
+          Reset DB
+        </button>
+      </div>
+
+      <pre id="output" class="mt-6 bg-gray-900 text-white p-4 rounded-xl"></pre>
+
+      <!-- LIVE TABLE -->
+      <h4 class="text-xl font-semibold mt-10 mb-4">Live Table View</h4>
+      <div id="table" class="overflow-x-auto"></div>
+    </main>
+  </body>
+</html>
