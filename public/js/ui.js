@@ -1,5 +1,5 @@
 // ui.js
-import { db, execQuery } from "./db.js";
+import { db,resetDatabase } from "./db.js";
 
 export function renderPythonStyleOutput(result) {
   if (!result || result.length === 0) return "[]";
@@ -32,7 +32,7 @@ export function renderHTMLTable(result) {
   return html;
 }
 
-export function renderTable() {
+export function renderTable(tableEl) {
   if (!db) return;
 
   const tablesResult = db.exec(`
@@ -40,7 +40,6 @@ export function renderTable() {
     WHERE type='table' AND name NOT LIKE 'sqlite_%';
   `);
 
-  const tableEl = document.getElementById("table");
   if (!tablesResult.length) {
     tableEl.innerHTML = "No tables found.";
     return;
@@ -53,10 +52,21 @@ export function renderTable() {
     const result = db.exec(`SELECT * FROM ${name};`);
 
     finalHTML += `<h4>${name}</h4>`;
-    
+
     // Always render headers
     let html = "<table class='sql-output'><thead><tr>";
-    const columns = result[0]?.columns || db.exec(`PRAGMA table_info(${name});`).map(c => c[1]);
+
+    // Use PRAGMA to get column names if no rows
+    let columns = [];
+    if (result.length && result[0].columns) {
+      columns = result[0].columns;
+    } else {
+      const pragmaResult = db.exec(`PRAGMA table_info(${name});`);
+      if (pragmaResult.length) {
+        columns = pragmaResult[0].values.map(col => col[1]); // col[1] is column name
+      }
+    }
+
     columns.forEach(col => html += `<th>${col}</th>`);
     html += "</tr></thead><tbody>";
 
@@ -77,22 +87,61 @@ export function renderTable() {
   tableEl.innerHTML = finalHTML;
 }
 
-export function attachUIHandlers() {
-  document.getElementById("runBtn").addEventListener("click", () => {
-    const query = document.getElementById("query").value;
-    const outputEl = document.getElementById("output");
+export function attachRunQuery(buttonEl, outputEl, tableEl, examplesDict, queryEl = null) {
+  buttonEl.addEventListener("click", () => {
+    let query;
+
+    if (queryEl) {
+      // Use the textarea/query element provided
+      query = queryEl.value;
+    } else {
+      // Fallback: read topic from URL and get SQL from examples dictionary
+      const params = new URLSearchParams(window.location.search);
+      const selectedTopic = params.get("topic") || "select";
+
+      if (!examplesDict[selectedTopic]) {
+        if (outputEl) outputEl.textContent = "No example for this topic.";
+        if (tableEl) tableEl.innerHTML = "";
+        return;
+      }
+
+      query = examplesDict[selectedTopic].sql_example;
+    }
+
     try {
-      const result = execQuery(query);
-      outputEl.textContent = renderPythonStyleOutput(result);
-      renderTable();
+      const result = db.exec(query);
+      if (outputEl) outputEl.textContent = renderPythonStyleOutput(result);
+      renderTable(tableEl);
     } catch (e) {
-      outputEl.textContent = e.message;
+      if (outputEl) outputEl.textContent = e.message;
+      if (tableEl) tableEl.innerHTML = "";
     }
   });
+}
 
-  document.getElementById("resetBtn").addEventListener("click", async () => {
-    await import("./db.js").then((m) => m.initDB());
-    renderTable();
-    document.getElementById("output").textContent = "Database Reset.";
+// // ui.js
+// export function attachResetDB(buttonEl, outputEl, tableEl, setupFn) {
+//   buttonEl.addEventListener("click", async () => {
+//     if (typeof setupFn === "function") {
+//       await setupFn();               // call the page-specific setup
+//       renderTable(tableEl);          // render table with correct element
+//       if (outputEl) outputEl.textContent = "Database Reset.";
+//     } else {
+//       console.error("No setup function provided for reset.");
+//     }
+//   });
+// }
+
+export function attachResetDB(buttonEl,outputEl) {
+  buttonEl.addEventListener("click", async () => {
+    // read topic dynamically from URL
+
+    const params = new URLSearchParams(window.location.search);
+    const topic = params.get("topic");
+
+    console.log("Reset Button | Topic:", topic);
+
+    await resetDatabase(topic);
+    if (outputEl) outputEl.textContent = "Database Reset.";
   });
 }

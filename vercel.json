@@ -3,6 +3,7 @@
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/docs", "destination": "/docs.html" },
-    { "source": "/sandbox", "destination": "/sandbox.html" }
+    { "source": "/sandbox", "destination": "/sandbox.html" },
+    { "source": "/refactor", "destination": "/refactor.html" }
   ]
 }
