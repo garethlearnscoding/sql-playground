@@ -2,11 +2,6 @@
   "version": 2,
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-<<<<<<< Updated upstream
-    { "source": "/docs", "destination": "/docs.html" },
-    { "source": "/sandbox", "destination": "/sandbox.html" }
-=======
     { "source": "/docs", "destination": "/landscape.html" }
->>>>>>> Stashed changes
   ]
 }
