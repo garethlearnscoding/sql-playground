@@ -1,7 +1,5 @@
 import { examples } from "../data/data.js";
 
-console.log(examples.insert.sql_example);
-
 window.loadExample = function (topic) {
   if (!examples[topic]) return;
 

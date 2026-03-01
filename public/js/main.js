@@ -6,5 +6,12 @@ import "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers
 
 
 /* Custom Scripts */
-import "./sql.js";
 import "./example.js";
+import { initDB } from './db.js';
+import { renderTable, attachUIHandlers } from './ui.js';
+
+window.addEventListener("DOMContentLoaded", async () => {
+  await initDB();
+  renderTable();
+  attachUIHandlers();
+});

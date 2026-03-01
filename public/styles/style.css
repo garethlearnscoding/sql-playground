@@ -40,3 +40,7 @@ body {
   padding: 0;
   overflow: hidden; /* prevents extra scrollbars */
 }
+
+[x-cloak] {
+  display: none !important;
+}
