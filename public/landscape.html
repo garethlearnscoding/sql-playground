@@ -32,10 +32,14 @@
       class="bg-gray-900 text-white sticky top-0 z-50 shadow-lg px-6 py-3"
     >
       <div class="flex items-center justify-between">
-        <div x-text="page === 'docs' ? 'SQL Examples' : 'SQL Sandbox'" class="text-lg font-semibold tracking-wide">SQL Examples</div>
+        <div
+          x-text="page === 'docs' ? 'SQL Examples' : 'SQL Sandbox'"
+          class="text-lg font-semibold tracking-wide"
+        >
+          SQL Examples
+        </div>
 
         <nav class="hidden md:flex space-x-6">
-            
           <!-- Tables -->
           <div x-data="{ open: false }" class="relative">
             <button
@@ -217,15 +221,22 @@
 
         <button
           @click="
-            page = (page === 'docs' ? 'sandbox' : 'docs');
-            $nextTick(() => {
-              if (page === 'sandbox') {
-                setupSandboxDB();
-              } else {
-                setupDocsDB();
-              }
-            });
-          "
+          if (page === 'docs') {
+            page = 'sandbox';
+
+            history.replaceState({}, '', window.location.pathname);
+          } else {
+            page = 'docs';
+          }
+
+          $nextTick(() => {
+            if (page === 'sandbox') {
+              setupSandboxDB();
+            } else {
+              setupDocsDB();
+            }
+          });
+        "
           class="bg-blue-600 hover:bg-blue-500 px-4 py-2 w-28 text-center rounded-xl shadow-md transition"
           x-text="page === 'docs' ? 'Sandbox' : 'Docs'"
         ></button>
@@ -233,7 +244,10 @@
     </header>
 
     <!-- SQL Docs Content -->
-    <main x-show="page === 'docs'" class="max-w-5xl mx-auto px-6 py-10 main-scroll">
+    <main
+      x-show="page === 'docs'"
+      class="max-w-5xl mx-auto px-6 py-10 main-scroll"
+    >
       <h3 class="text-2xl font-semibold mb-4">SQL Docs</h3>
       <!-- Docs -->
       <h4 class="text-xl font-semibold mt-10 mb-4">SQL Syntax</h4>
@@ -281,9 +295,12 @@
     </main>
 
     <!-- SQL Sand Box Content-->
-    <main x-show="page === 'sandbox'" class="max-w-5xl mx-auto px-6 py-10 main-scroll">
+    <main
+      x-show="page === 'sandbox'"
+      class="max-w-5xl mx-auto px-6 py-10 main-scroll"
+    >
       <h3 class="text-2xl font-semibold mb-4">SQL Sandbox</h3>
-        
+
       <textarea
         id="query"
         class="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
